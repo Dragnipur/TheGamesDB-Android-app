@@ -1,7 +1,8 @@
 package com.example.thegamesdb;
 
 import com.AridRayne.thegamesdb.lib.Data;
-import com.AridRayne.thegamesdb.lib.GameItem;
+import com.AridRayne.thegamesdb.lib.Game;
+import com.AridRayne.thegamesdb.lib.GameList;
 import com.AridRayne.thegamesdb.lib.Utilities;
 
 import android.os.Bundle;
@@ -16,9 +17,9 @@ public class SearchActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         
-        Utilities util = new Utilities();
-        Data<GameItem> game = util.GameFromID(1);
-        Log.d("game", game.
+        Utilities util = Utilities.getInstance();
+        GameList games = util.getGamesList("Sims");
+        Log.d("game", games.getItem(0).getName());
     }
 
 
