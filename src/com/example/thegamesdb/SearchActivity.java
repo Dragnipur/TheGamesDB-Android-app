@@ -1,25 +1,24 @@
 package com.example.thegamesdb;
 
-import com.AridRayne.thegamesdb.lib.Data;
-import com.AridRayne.thegamesdb.lib.Game;
-import com.AridRayne.thegamesdb.lib.GameList;
-import com.AridRayne.thegamesdb.lib.Utilities;
-
-import android.os.Bundle;
 import android.app.Activity;
-import android.util.Log;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public class SearchActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        
-        Utilities util = Utilities.getInstance();
-        GameList games = util.getGamesList("Sims");
-        Log.d("game", games.getItem(0).getName());
+        setContentView(R.layout.activity_search);        
+        setSearchBarEnterAction();        
+
+  
     }
 
 
@@ -28,6 +27,28 @@ public class SearchActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.search, menu);
         return true;
+    }
+    
+    private void setSearchBarEnterAction() {
+		final EditText searchBar = (EditText) findViewById(R.id.searchBar);
+		searchBar.setOnEditorActionListener(new OnEditorActionListener() {
+
+			  public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			    if (actionId == EditorInfo.IME_ACTION_DONE) {
+			      String searchQuery = searchBar.getText().toString();
+			      sendSearchRequest(searchQuery);
+			      return true;
+			    } else {
+			      return false;
+			    }
+			 }
+		});
+    }
+    
+    private void sendSearchRequest(String searchQuery) {
+    	Intent intent = new Intent(this, GameListActivity.class);
+    	intent.putExtra("searchQuery", searchQuery);
+    	startActivity(intent);
     }
     
 }
