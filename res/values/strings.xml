@@ -7,5 +7,6 @@
     <string name="logo">logo</string>
     <string name="title_activity_game_list">GameListActivity</string>
     <string name="title_activity_game_overview">GameOverviewActivity</string>
+    <string name="title_activity_game_list_fragment">GameListFragment</string>
 
 </resources>
