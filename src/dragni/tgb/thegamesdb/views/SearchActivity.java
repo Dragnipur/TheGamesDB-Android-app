@@ -1,4 +1,7 @@
-package com.example.thegamesdb;
+package dragni.tgb.thegamesdb.views;
+
+import com.example.thegamesdb.R;
+
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,14 +14,12 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 public class SearchActivity extends Activity {
-
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);        
         setSearchBarEnterAction();        
-
-  
     }
 
 

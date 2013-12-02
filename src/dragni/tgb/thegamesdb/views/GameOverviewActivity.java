@@ -1,4 +1,6 @@
-package com.example.thegamesdb;
+package dragni.tgb.thegamesdb.views;
+
+import com.example.thegamesdb.R;
 
 import android.os.Bundle;
 import android.app.Activity;

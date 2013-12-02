@@ -1,15 +1,37 @@
-package com.example.thegamesdb;
+package dragni.tgb.thegamesdb.views;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.ListFragment;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+
+import com.example.thegamesdb.R;
+
+import dragni.tgb.thegamesdb.logic.GameManager;
 
 public class GameListActivity extends Activity {
-	private FragmentManager fragmentManager;
+	private GameManager gameManager;
+	public static String[][] gamesList;
+	
+	private static String baseUrl = "http://thegamesdb.net/api/";
+	private static String getGameUrl = "GetGame.php?id=";
+	private static String searchGamesUrl = "GetGamesList.php?name=";
+	
+	private ListView gameListView;
+	private ListAdapter gameListAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,16 +42,36 @@ public class GameListActivity extends Activity {
 		Intent intent = getIntent();
 		String searchQuery = intent.getStringExtra("searchQuery");
 		
-		//retrieve a list of games.
-		DataHandler dataHandler = new DataHandler();
-		fragmentManager = getFragmentManager();
-		
-		addList();
-		addList();
-		addList();
-		addList();
-		
-		
+		//setup the manager and send the search request.
+		gameManager = new GameManager();	
+		sendSearchRequest(searchQuery);
+	}
+	
+	
+	private void sendSearchRequest(String searchQuery) {
+		try {
+			URL url = new URL(baseUrl + searchGamesUrl + searchQuery);
+			DownloadGamesList asyncDownload = new DownloadGamesList();
+			asyncDownload.execute(url);
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void showGamesList(String[][] gamesList) {
+		gameListView = (ListView) findViewById(R.id.gameListView);
+		gameListAdapter = new ListAdapter(this, gamesList);
+        gameListView.setAdapter(gameListAdapter);
+        
+        // Click event for single list row
+        gameListView.setOnItemClickListener(new OnItemClickListener() {
+ 
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+				// onclick thingy
+			}
+        });	
 	}
 
 	@Override
@@ -38,13 +80,28 @@ public class GameListActivity extends Activity {
 		getMenuInflater().inflate(R.menu.game_list, menu);
 		return true;
 	}
-	
-	private void addList() {
-        GameListFragment fragment = new GameListFragment();
-        
-        FragmentTransaction fragTransaction = fragmentManager.beginTransaction();
-        fragTransaction.add(R.id.gameListLayout, fragment);
-        fragTransaction.commit();
-	}
+	  
+	 private class DownloadGamesList extends AsyncTask<URL, Integer, String[][]> {
+	     protected String[][] doInBackground(URL... url) {
+	    	 
+	    	 try {
+				gameManager.parseXml(url[0]);
+				String[][] searchResults = gameManager.getSearchResults();
+				return searchResults;
+			} catch (XmlPullParserException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	      return null;
+	     }
+	     
+	     protected void onProgressUpdate(Integer... progress) {
+	    	 //show progress or something.
+	     }
 
+	     protected void onPostExecute(String[][] gamesList) {
+	    	 showGamesList(gamesList);
+	     }
+	 }
 }
