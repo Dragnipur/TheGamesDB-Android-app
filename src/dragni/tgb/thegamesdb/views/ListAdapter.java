@@ -44,17 +44,17 @@ public class ListAdapter extends BaseAdapter {
         if(convertView == null)
             vi = inflater.inflate(R.layout.game_list_row, null);
  
-        TextView title = (TextView)vi.findViewById(R.id.title); // title
-        TextView artist = (TextView)vi.findViewById(R.id.artist); // artist name
-        TextView duration = (TextView)vi.findViewById(R.id.duration); // duration
-        ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image); // thumb image
+        TextView title = (TextView)vi.findViewById(R.id.title);
+        TextView platform = (TextView)vi.findViewById(R.id.platform);
+        TextView releaseDate = (TextView)vi.findViewById(R.id.releaseDate);
+        ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
  
         String[] game = data[position];
  
         // Setting all values in listview
         title.setText(game[1]);
-        artist.setText(game[2]);
-        duration.setText(game[3]);
+        platform.setText(game[2]);
+        releaseDate.setText(game[3]);
         //imageLoader.DisplayImage(game[4], thumb_image);
         return vi;
     }

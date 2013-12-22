@@ -11,7 +11,7 @@ import android.util.Log;
 import dragni.tgb.thegamesdb.entity.Game;
 import dragni.tgb.thegamesdb.entity.SearchList;
 
-public class GameManager {
+public class GameSearcher {
 	
 	private SearchList searchList;
 	
@@ -23,7 +23,7 @@ public class GameManager {
 		banner, screenshot, clearlogo, error;
 	}
 	
-	public GameManager() {
+	public GameSearcher() {
 		searchList = new SearchList();
 	}
 	

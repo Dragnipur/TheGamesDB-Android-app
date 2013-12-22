@@ -24,17 +24,18 @@
     </LinearLayout>
  
     <!-- Title Of Game-->
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="gamename"
+        android:text="name"
         android:textColor="#040404"
-        android:typeface="sans"
         android:textSize="17sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:typeface="sans" />
  
     <!-- Platform -->
 
@@ -45,7 +46,8 @@
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textColor="#343434"
+        android:text="platform"
+        android:textColor="#4D4D4D"
         android:textSize="12sp" />
  
     <!-- Rightend ReleaseDate -->
@@ -59,7 +61,8 @@
         android:layout_marginRight="5dip"
         android:layout_toRightOf="@+id/title"
         android:gravity="right"
-        android:textColor="#10bcc9"
+        android:text="date"
+        android:textColor="#3B6145"
         android:textSize="12sp"
         android:textStyle="bold" />
  

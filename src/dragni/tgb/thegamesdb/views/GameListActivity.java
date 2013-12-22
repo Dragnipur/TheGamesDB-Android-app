@@ -3,15 +3,12 @@ package dragni.tgb.thegamesdb.views;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,10 +17,10 @@ import android.widget.ListView;
 
 import com.example.thegamesdb.R;
 
-import dragni.tgb.thegamesdb.logic.GameManager;
+import dragni.tgb.thegamesdb.logic.GameSearcher;
 
 public class GameListActivity extends Activity {
-	private GameManager gameManager;
+	private GameSearcher gameManager;
 	public static String[][] gamesList;
 	
 	private static String baseUrl = "http://thegamesdb.net/api/";
@@ -43,7 +40,7 @@ public class GameListActivity extends Activity {
 		String searchQuery = intent.getStringExtra("searchQuery");
 		
 		//setup the manager and send the search request.
-		gameManager = new GameManager();	
+		gameManager = new GameSearcher();	
 		sendSearchRequest(searchQuery);
 	}
 	
@@ -60,7 +57,7 @@ public class GameListActivity extends Activity {
 	}
 	
 	private void showGamesList(String[][] gamesList) {
-		gameListView = (ListView) findViewById(R.id.gameListView);
+		gameListView = (ListView) findViewById(R.id.gameListLayout);
 		gameListAdapter = new ListAdapter(this, gamesList);
         gameListView.setAdapter(gameListAdapter);
         
