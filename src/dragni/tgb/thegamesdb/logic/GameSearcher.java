@@ -16,9 +16,9 @@ public class GameSearcher {
 	private SearchList searchList;
 	
 	private enum XmlTag {
-		Data, Game, id, GameTitle, ReleaseDate,
-		Platform, Overview, ESRB, Genres, Genre,
-		Youtube, Publisher, Developer, Rating,
+		Data, baseImgUrl, Game, id, GameTitle, ReleaseDate,
+		PlatformId, Platform, Overview, ESRB, Genres, genre,
+		Players, Coop, Youtube, Publisher, Developer, Rating,
 		Images, fanart, original, thumb, boxart, 
 		banner, screenshot, clearlogo, error;
 	}
@@ -64,6 +64,8 @@ public class GameSearcher {
 	}
 	
 	public void handleXmlTag(String tag, String value) {
+		tag = tag.replace("-", "");
+		try {
         switch( XmlTag.valueOf( tag ) ) {
         case Game:
             searchList.add(new Game());
@@ -87,7 +89,7 @@ public class GameSearcher {
         case ESRB:
         	searchList.getLastGame().setESRB(value);
         	break;
-        case Genre:
+        case genre:
         	searchList.getLastGame().addGenre(value);
         	break;
         case Youtube:
@@ -121,6 +123,10 @@ public class GameSearcher {
         	//throw exception.
         default:
         	break;
+        }
+		}
+        catch( IllegalArgumentException e) {
+        	e.printStackTrace();
         }
 	}
 }

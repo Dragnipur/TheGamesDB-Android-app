@@ -25,7 +25,7 @@ public class GameListActivity extends Activity {
 	
 	private static String baseUrl = "http://thegamesdb.net/api/";
 	private static String getGameUrl = "GetGame.php?id=";
-	private static String searchGamesUrl = "GetGamesList.php?name=";
+	private static String searchGamesUrl = "GetGame.php?name=";
 	
 	private ListView gameListView;
 	private ListAdapter gameListAdapter;
