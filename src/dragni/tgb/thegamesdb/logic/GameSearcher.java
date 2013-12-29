@@ -1,132 +1,170 @@
 package dragni.tgb.thegamesdb.logic;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.util.Log;
 import dragni.tgb.thegamesdb.entity.Game;
-import dragni.tgb.thegamesdb.entity.SearchList;
+import dragni.tgb.thegamesdb.entity.GameList;
 
 public class GameSearcher {
-	
-	private SearchList searchList;
-	
+
+	private GameList searchList;
+	private int searchType;
+	private static int MULTIPLEGAMES = 0;
+	private static int SINGLEGAME = 1;
+
 	private enum XmlTag {
-		Data, baseImgUrl, Game, id, GameTitle, ReleaseDate,
-		PlatformId, Platform, Overview, ESRB, Genres, genre,
-		Players, Coop, Youtube, Publisher, Developer, Rating,
-		Images, fanart, original, thumb, boxart, 
-		banner, screenshot, clearlogo, error;
+		Data, baseImgUrl, Game, id, GameTitle, AlternateTitles, title, ReleaseDate, PlatformId, Platform, Overview, ESRB, Genres, genre, Players, Coop, Youtube, Publisher, Developer, Rating, Images, fanart, original, thumb, boxart, banner, screenshot, clearlogo, error;
 	}
-	
+
+	private String currentTag;
+	private XmlPullParser xpp;
+
 	public GameSearcher() {
-		searchList = new SearchList();
+		searchList = new GameList();
 	}
-	
-	public String[][] getSearchResults() {
-		String[][] searchResults = new String[searchList.size()][4];
-		for(int i = 0; i < searchList.size(); i++) {
-			searchResults[i][0] = searchList.get(i).getId() + "";
-			searchResults[i][1] = searchList.get(i).getTitle();
-			searchResults[i][2] = searchList.get(i).getPlatform();
-			searchResults[i][3] = searchList.get(i).getReleaseDate();
+
+	public GameList getSearchResults() {
+		Collections.sort(searchList);
+		return searchList;
+	}
+
+	public void parseXml(URL url, int type) throws XmlPullParserException,
+			IOException {
+		searchType = type;
+		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+		factory.setNamespaceAware(true);
+		xpp = factory.newPullParser();
+		InputStream stream = url.openStream();
+		xpp.setInput(stream, null);
+		int eventType = xpp.getEventType();
+
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			if (eventType == XmlPullParser.START_TAG) {
+				handleStartTag();
+			} else if (eventType == XmlPullParser.TEXT) {
+				handleTextTag();
+			} else if (eventType == XmlPullParser.END_TAG) {
+				handleEndTag();
+			}
+
+			eventType = xpp.next();
 		}
-		
-		return searchResults;
 	}
-	
-	public void parseXml(URL url) throws XmlPullParserException, IOException {
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XmlPullParser xpp = factory.newPullParser();
-        InputStream stream = url.openStream();
-        xpp.setInput(stream, null);
-        int eventType = xpp.getEventType();
-        String currentTag = null;
-        
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-        	if(eventType == XmlPullParser.START_TAG) {
-        		currentTag = (xpp.getName());
-        	} else if(eventType == XmlPullParser.TEXT) {
-        		if(currentTag != null) {
-            		handleXmlTag(currentTag, xpp.getText());
-        		}
-        	} else if(eventType == XmlPullParser.END_TAG) {
-        		currentTag = null;
-        	}
-        	
-         eventType = xpp.next();
-        }
+
+	private void handleStartTag() {
+		currentTag = (xpp.getName());
+		if (currentTag.equals("boxart"))
+			handleBoxArtTag();
 	}
-	
-	public void handleXmlTag(String tag, String value) {
-		tag = tag.replace("-", "");
+
+	private void handleBoxArtTag() {
+		String side = xpp.getAttributeValue(null, "side");
+
+		if (side.equals("front")) {
+			String thumbNail = xpp.getAttributeValue(null, "thumb");
+			searchList.getLastGame().setThumbNailLocation(thumbNail);
+		}
+	}
+
+	private void handleTextTag() {
+		if (currentTag != null) {
+			String tag = currentTag.replace("-", "");
+			String value = xpp.getText();
+
+			if (searchType == MULTIPLEGAMES) {
+				handleMultipleGames(tag, value);
+			} else if (searchType == SINGLEGAME) {
+				handleSingleGame(tag, value);
+			}
+		}
+	}
+
+	private void handleMultipleGames(String tag, String value) {
 		try {
-        switch( XmlTag.valueOf( tag ) ) {
-        case Game:
-            searchList.add(new Game());
-            break;
-        case id:
-        	int id = Integer.parseInt(value);
-            searchList.getLastGame().setId(id);
-            break;
-        case GameTitle:
-        	searchList.getLastGame().setTitle(value);
-        	break;
-        case ReleaseDate:
-        	searchList.getLastGame().setReleaseDate(value);
-        	break;
-        case Platform:
-        	searchList.getLastGame().setPlatform(value);
-        	break;
-        case Overview:
-        	searchList.getLastGame().setOverview(value);
-        	break;
-        case ESRB:
-        	searchList.getLastGame().setESRB(value);
-        	break;
-        case genre:
-        	searchList.getLastGame().addGenre(value);
-        	break;
-        case Youtube:
-        	searchList.getLastGame().setYoutubeUrl(value);
-        	break;
-        case Publisher:
-        	searchList.getLastGame().setPublisher(value);
-        	break;
-        case Developer:
-        	searchList.getLastGame().setDeveloper(value);
-        	break;
-        case Rating:
-        	double rating = Double.parseDouble(value);
-        	searchList.getLastGame().setRating(rating);
-        	break;
-        case fanart:
-        	break;
-        case original:
-        	break;
-        case thumb:
-        	break;
-        case boxart:
-        	break;
-        case banner:
-        	break;
-        case screenshot:
-        	break;
-        case clearlogo:
-        	break;
-        case error:
-        	//throw exception.
-        default:
-        	break;
-        }
+			switch (XmlTag.valueOf(tag)) {
+			case Game:
+				searchList.add(new Game());
+				break;
+			case id:
+				int id = Integer.parseInt(value);
+				searchList.getLastGame().setId(id);
+				break;
+			case GameTitle:
+				searchList.getLastGame().setTitle(value);
+				break;
+			case ReleaseDate:
+				searchList.getLastGame().setReleaseDate(value);
+				break;
+			case Platform:
+				searchList.getLastGame().setPlatform(value);
+				break;
+			default:
+				break;
+			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 		}
-        catch( IllegalArgumentException e) {
-        	e.printStackTrace();
-        }
+	}
+
+	private void handleSingleGame(String tag, String value) {
+		try {
+			switch (XmlTag.valueOf(tag)) {
+			case Game:
+				searchList.add(new Game());
+				break;
+			case id:
+				int id = Integer.parseInt(value);
+				searchList.getLastGame().setId(id);
+				break;
+			case GameTitle:
+				searchList.getLastGame().setTitle(value);
+				break;
+			case ReleaseDate:
+				searchList.getLastGame().setReleaseDate(value);
+				break;
+			case Platform:
+				searchList.getLastGame().setPlatform(value);
+				break;
+			case Overview:
+				searchList.getLastGame().setOverview(value);
+				break;
+			case genre:
+				searchList.getLastGame().addGenre(value);
+				break;
+			case Players:
+				searchList.getLastGame().setPlayers(value);
+				break;
+			case Coop:
+				searchList.getLastGame().setCoop(value);
+				break;
+			case Youtube:
+				searchList.getLastGame().setYoutubeUrl(value);
+				break;
+			case Publisher:
+				searchList.getLastGame().setPublisher(value);
+				break;
+			case Developer:
+				searchList.getLastGame().setDeveloper(value);
+				break;
+			case original:
+				searchList.getLastGame().addImage(value);
+				break;
+			default:
+				break;
+			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void handleEndTag() {
+		currentTag = null;
 	}
 }

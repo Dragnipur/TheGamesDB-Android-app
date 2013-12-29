@@ -16,6 +16,7 @@
         android:layout_marginRight="5dip">
  
         <ImageView
+            android:contentDescription="@string/logo"
             android:id="@+id/list_image"
             android:layout_width="50dip"
             android:layout_height="50dip"
@@ -24,21 +25,18 @@
     </LinearLayout>
  
     <!-- Title Of Game-->
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/thumbnail"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:text="name"
-        android:textColor="#040404"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:typeface="sans" />
+      <TextView
+         android:id="@+id/title"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentTop="true"
+         android:layout_toRightOf="@+id/thumbnail"
+         android:textColor="#040404"
+         android:textSize="17sp"
+         android:textStyle="bold"
+         android:typeface="sans" />
  
     <!-- Platform -->
-
     <TextView
         android:id="@+id/platform"
         android:layout_width="fill_parent"
@@ -46,7 +44,6 @@
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="platform"
         android:textColor="#4D4D4D"
         android:textSize="12sp" />
  
@@ -56,12 +53,12 @@
         android:id="@+id/releaseDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/title"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/title"
         android:layout_marginRight="5dip"
         android:layout_toRightOf="@+id/title"
         android:gravity="right"
-        android:text="date"
         android:textColor="#3B6145"
         android:textSize="12sp"
         android:textStyle="bold" />
@@ -69,10 +66,11 @@
      <!-- Rightend Arrow -->
 
      <ImageView
+         android:contentDescription="@string/arrow"
          android:layout_width="20dp"
          android:layout_height="20dp"
          android:layout_alignRight="@+id/platform"
          android:layout_below="@+id/title"
          android:src="@drawable/arrow" />
- 
+
 </RelativeLayout>

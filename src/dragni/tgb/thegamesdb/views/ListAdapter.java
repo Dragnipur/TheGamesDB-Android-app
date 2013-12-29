@@ -10,25 +10,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.thegamesdb.R;
+import com.squareup.picasso.Picasso;
 
-import dragni.tgb.thegamesdb.util.ImageLoader;
+import dragni.tgb.thegamesdb.entity.Game;
+import dragni.tgb.thegamesdb.entity.GameList;
+import dragni.tgb.thegamesdb.util.UrlMaker;
  
 public class ListAdapter extends BaseAdapter {
  
-    private Activity activity;
-    private String[][] data;
+    private GameList games;
     private static LayoutInflater inflater=null;
-    public ImageLoader imageLoader; 
+    private UrlMaker urlMaker;
  
-    public ListAdapter(Activity a, String[][] d) {
-        activity = a;
-        data=d;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        imageLoader=new ImageLoader(activity.getApplicationContext());
+    public ListAdapter(Activity activ, GameList games) {
+        this.games = games;
+        inflater = (LayoutInflater) activ.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        urlMaker = new UrlMaker();
     }
  
     public int getCount() {
-        return data.length;
+        return games.size();
     }
  
     public Object getItem(int position) {
@@ -41,6 +42,7 @@ public class ListAdapter extends BaseAdapter {
  
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
+        
         if(convertView == null)
             vi = inflater.inflate(R.layout.game_list_row, null);
  
@@ -49,13 +51,24 @@ public class ListAdapter extends BaseAdapter {
         TextView releaseDate = (TextView)vi.findViewById(R.id.releaseDate);
         ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
  
-        String[] game = data[position];
+        Game game = games.get(position);
+        
+        String gameTitle = game.getTitle();
+        
+        //TODO: fix layout so it just puts the rest of the name on a next line.
+        if(gameTitle.length() > 20) {
+        	gameTitle = gameTitle.substring(0, 20);
+        	gameTitle = gameTitle + "...";
+        }
  
         // Setting all values in listview
-        title.setText(game[1]);
-        platform.setText(game[2]);
-        releaseDate.setText(game[3]);
-        //imageLoader.DisplayImage(game[4], thumb_image);
+        title.setTag(game.getId());
+        title.setText(gameTitle);
+        platform.setText(game.getPlatform());
+        releaseDate.setText(game.getReleaseDate());
+        Context context = vi.getContext();
+        String imageUrl = urlMaker.getGameThumbNailUrl(game.getThumbNailLocation());
+        Picasso.with(context).load(imageUrl).into(thumb_image);
         return vi;
     }
 }
