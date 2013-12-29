@@ -1,13 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:TheGamesDB="http://schemas.android.com/apk/res-auto" >
-
-<item android:id="@+id/search"
-	android:icon="@drawable/ic_menu_search"
-    android:title="@string/search"
+      xmlns:thegamesdb="http://schemas.android.com/apk/res-auto" >
+      
+<item android:id="@+id/sorting"
+    android:icon="@drawable/ic_menu_sort"
+    android:title="@string/sorting"
     android:showAsAction="ifRoom" />
     
-<item android:id="@+id/preferences"
-	android:icon="@drawable/ic_menu_preferences"
-    android:title="@string/preferences"
-    android:showAsAction="ifRoom" />
 </menu>

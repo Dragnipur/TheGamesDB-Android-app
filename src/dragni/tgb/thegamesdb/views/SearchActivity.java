@@ -1,20 +1,18 @@
 package dragni.tgb.thegamesdb.views;
 
-import com.example.thegamesdb.R;
-
-
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class SearchActivity extends Activity {
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.example.thegamesdb.R;
+
+public class SearchActivity extends SherlockActivity {
 	
 	private String searchQuery;
 	
@@ -28,7 +26,7 @@ public class SearchActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search, menu);
+        getSupportMenuInflater().inflate(R.menu.search, menu);
         return true;
     }
     

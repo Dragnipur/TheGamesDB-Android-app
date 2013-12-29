@@ -9,13 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v4.app.NavUtils;
+import com.actionbarsherlock.view.*;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.example.thegamesdb.R;
 
 import dragni.tgb.thegamesdb.entity.GameList;
@@ -23,7 +25,7 @@ import dragni.tgb.thegamesdb.logic.GameSearcher;
 import dragni.tgb.thegamesdb.util.SearchType;
 import dragni.tgb.thegamesdb.util.UrlMaker;
 
-public class GameListActivity extends Activity {
+public class GameListActivity extends SherlockActivity {
 	private GameSearcher gameSearcher;
 	private ListView gameListView;
 	private ListAdapter gameListAdapter;
@@ -33,6 +35,8 @@ public class GameListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.load_layout);
+
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// get the search query.
 		Intent intent = getIntent();
@@ -78,8 +82,18 @@ public class GameListActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.game_list, menu);
+		getSupportMenuInflater().inflate(R.menu.game_list, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		}
+		return super.onOptionsItemSelected(menuItem);
 	}
 
 	private class DownloadGamesList extends AsyncTask<URL, Integer, GameList> {

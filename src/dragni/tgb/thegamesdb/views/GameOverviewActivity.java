@@ -7,6 +7,15 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.example.thegamesdb.R;
 import com.squareup.picasso.Picasso;
 
@@ -16,15 +25,7 @@ import dragni.tgb.thegamesdb.logic.GameSearcher;
 import dragni.tgb.thegamesdb.util.SearchType;
 import dragni.tgb.thegamesdb.util.UrlMaker;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.app.Activity;
-import android.content.Intent;
-import android.view.Menu;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-public class GameOverviewActivity extends Activity {
+public class GameOverviewActivity extends SherlockActivity {
 
 	private int gameId;
 	private UrlMaker urlMaker;
@@ -50,8 +51,18 @@ public class GameOverviewActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.game_overview, menu);
+		getSupportMenuInflater().inflate(R.menu.game_overview, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(menuItem);
 	}
 
 	private void loadGameData() {

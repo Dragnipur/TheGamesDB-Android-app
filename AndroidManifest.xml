@@ -27,15 +27,19 @@
         </activity>
         <activity
             android:name="dragni.tgb.thegamesdb.views.GameListActivity"
-            android:label="@string/title_activity_game_list" >
+            android:label="@string/title_activity_game_list"
+            android:parentActivityName="dragni.tgb.thegamesdb.views.SearchActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dragni.tgb.thegamesdb.views.SearchActivity" />
         </activity>
         <activity
             android:name="dragni.tgb.thegamesdb.views.GameOverviewActivity"
-            android:label="@string/title_activity_game_overview" >
-        </activity>
-        <activity
-            android:name="dragni.tgb.thegamesdb.views.GameListFragment"
-            android:label="@string/title_activity_game_list_fragment" >
+            android:label="@string/title_activity_game_overview"
+            android:parentActivityName="dragni.tgb.thegamesdb.views.GameListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dragni.tgb.thegamesdb.views.GameListActivity" />
         </activity>
     </application>
 
