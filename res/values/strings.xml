@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Settingss</string>
     <string name="app_name">TheGamesDB</string>
     <string name="arrow">arrow</string>
-    <string name="search_games">Searching your games&#8230;</string>
+    <string name="search_games">Searching for games&#8230;</string>
     <string name="coop">Co-op</string>
     <string name="details">Details</string>
     <string name="developer">Developer</string>

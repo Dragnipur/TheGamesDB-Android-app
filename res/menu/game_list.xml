@@ -1,9 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:thegamesdb="http://schemas.android.com/apk/res-auto" >
-      
-<item android:id="@+id/sorting"
-    android:icon="@drawable/ic_menu_sort"
-    android:title="@string/sorting"
-    android:showAsAction="ifRoom" />
-    
+    xmlns:thegamesdb="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/sorting"
+        android:title="@string/sorting"
+        android:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/sortByName"
+                android:icon="@drawable/down"
+                android:title="name"/>
+            <item
+                android:id="@+id/sortByPlatform"
+                android:icon="@drawable/none"
+                android:title="platform"/>
+            <item
+                android:id="@+id/sortByRelease"
+                android:icon="@drawable/none"
+                android:title="releasedate"/>
+        </menu>
+    </item>
+
 </menu>

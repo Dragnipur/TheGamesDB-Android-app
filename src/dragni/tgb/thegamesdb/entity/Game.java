@@ -1,22 +1,69 @@
 package dragni.tgb.thegamesdb.entity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class Game implements Comparable<Game>{
-	private ArrayList<String> genres, images;
+public class Game implements Comparable<Game> {
+	private ArrayList<String> genres;
+	private ImageList images;
 	private int id;
 	private String title, platform, releaseDate, overview, ESRB, players, coop,
 			youtubeUrl, publisher, developer, thumbNailLocation;
 	private double rating;
 
+	public enum SortType {
+		TITLE, PLATFORM, RELEASE
+	};
+
+	private SortType sortType;
+
 	public Game() {
 		genres = new ArrayList<String>();
-		images = new ArrayList<String>();
 	}
-	
+
 	public int compareTo(Game comparisonGame) {
-		String comparisonTitle = comparisonGame.getTitle();
-		return title.compareTo(comparisonTitle);
+
+		switch (sortType) {
+		case TITLE:
+			String comparisonTitle = comparisonGame.getTitle();
+			return title.compareTo(comparisonTitle);
+		case PLATFORM:
+			String comparisonPlatform = comparisonGame.getPlatform();
+			return platform.compareTo(comparisonPlatform);
+		case RELEASE:
+			return compareReleaseDates(comparisonGame);
+		default:
+			// TODO: throw exception.
+			return -1;
+		}
+	}
+
+	// TODO: clean this shit up
+	private int compareReleaseDates(Game comparisonGame) {
+		try {
+			String release = getReleaseDate();
+			String comparisonRelease = comparisonGame.getReleaseDate();
+
+			if (comparisonRelease.equals("N/A")) {
+				comparisonRelease = "01/01/1900";
+			}
+
+			if (release.equals("N/A")) {
+				release = "01/01/1900";
+			}
+
+			//TODO: change release date from string to date format.
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+			Date startReleaseDate = dateFormat.parse(release);
+			Date comparisonReleaseDate = dateFormat.parse(comparisonRelease);
+			return startReleaseDate.compareTo(comparisonReleaseDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return -1;
+			// TODO: do something useful
+		}
 	}
 
 	/** setters **/
@@ -76,8 +123,12 @@ public class Game implements Comparable<Game>{
 		this.thumbNailLocation = thumbNailLocation;
 	}
 
-	public void addImage(String imageLocation) {
-		images.add(imageLocation);
+	public void addImage(Image image) {
+		images.add(image);
+	}
+
+	public void setSortType(SortType sortType) {
+		this.sortType = sortType;
 	}
 
 	/** getters **/
@@ -132,7 +183,7 @@ public class Game implements Comparable<Game>{
 	}
 
 	public ArrayList<String> getGenres() {
-		if(genres.size() == 0) {
+		if (genres.size() == 0) {
 			genres.add("N/A");
 		}
 		return genres;
@@ -164,7 +215,7 @@ public class Game implements Comparable<Game>{
 		return thumbNailLocation;
 	}
 
-	public ArrayList<String> getImages() {
+	public ImageList getImages() {
 		return images;
 	}
 }

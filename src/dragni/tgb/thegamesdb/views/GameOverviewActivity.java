@@ -10,10 +10,21 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.ActionBar.TabListener;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.example.thegamesdb.R;
@@ -25,11 +36,19 @@ import dragni.tgb.thegamesdb.logic.GameSearcher;
 import dragni.tgb.thegamesdb.util.SearchType;
 import dragni.tgb.thegamesdb.util.UrlMaker;
 
-public class GameOverviewActivity extends SherlockActivity {
+public class GameOverviewActivity extends SherlockFragmentActivity {
 
 	private int gameId;
 	private UrlMaker urlMaker;
 	private GameSearcher gameSearcher;
+	private GameList gamesList;
+	private ActionBar actionBar;
+	private Tab tab;
+	private ViewPager pager;
+
+	private static final int INFORMATION = 0;
+	private static final int IMAGES = 1;
+	private static final int VIDEOS = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +67,83 @@ public class GameOverviewActivity extends SherlockActivity {
 		loadGameData();
 	}
 
+	private void initGameOverview() {
+		setContentView(R.layout.activity_game_overview);
+		actionBar = getSupportActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		pager = (ViewPager) findViewById(R.id.pager);
+		FragmentManager fm = getSupportFragmentManager();
+
+		ViewPager.SimpleOnPageChangeListener ViewPagerListener = new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				super.onPageSelected(position);
+				actionBar.setSelectedNavigationItem(position);
+			}
+		};
+
+		pager.setOnPageChangeListener(ViewPagerListener);
+		ViewPagerAdapter viewpageradapter = new ViewPagerAdapter(fm);
+		pager.setAdapter(viewpageradapter);
+
+		generateActionBar(actionBar);
+	}
+
+	private void generateActionBar(ActionBar actionBar) {
+
+		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+
+			@Override
+			public void onTabSelected(Tab tab, FragmentTransaction ft) {
+				pager.setCurrentItem(tab.getPosition());
+
+				int currentTab = tab.getPosition();
+
+				switch (currentTab) {
+				case INFORMATION:
+					showGame();
+					break;
+				case IMAGES:
+					break;
+				case VIDEOS:
+					break;
+				}
+			}
+
+			@Override
+			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+				// do nothing.
+			}
+
+			@Override
+			public void onTabReselected(Tab tab, FragmentTransaction ft) {
+				// do nothing.
+			}
+		};
+
+		createTabs(actionBar, tabListener);
+	}
+
+	private void createTabs(ActionBar actionBar, TabListener tabListener) {
+		// Create information tab.
+		tab = actionBar.newTab().setText("information")
+				.setTabListener(tabListener);
+		actionBar.addTab(tab);
+
+		// Create images tab.
+		tab = actionBar.newTab().setText("images").setTabListener(tabListener);
+		actionBar.addTab(tab);
+
+		// Create videos tab.
+		tab = actionBar.newTab().setText("videos").setTabListener(tabListener);
+		actionBar.addTab(tab);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.game_overview, menu);
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem menuItem) {
 		switch (menuItem.getItemId()) {
@@ -69,40 +158,6 @@ public class GameOverviewActivity extends SherlockActivity {
 		URL gameUrl = urlMaker.getGameByIdUrl(gameId);
 		DownloadGame asyncDownload = new DownloadGame();
 		asyncDownload.execute(gameUrl);
-	}
-
-	private void showGame(GameList gameList) {
-		Game game = gameList.get(0);
-
-		TextView name = (TextView) findViewById(R.id.gameName);
-		TextView platform = (TextView) findViewById(R.id.gamePlatform);
-		TextView players = (TextView) findViewById(R.id.gamePlayersTxt);
-		TextView coop = (TextView) findViewById(R.id.gameCoopTxt);
-		TextView genres = (TextView) findViewById(R.id.gameGenresTxt);
-		TextView releaseDate = (TextView) findViewById(R.id.gameReleaseTxt);
-		TextView publisher = (TextView) findViewById(R.id.gamePublisherTxt);
-		TextView developer = (TextView) findViewById(R.id.gameDeveloperTxt);
-		TextView overview = (TextView) findViewById(R.id.overviewTxt);
-		ImageView thumbImage = (ImageView) findViewById(R.id.gameThumb);
-
-		name.setText(game.getTitle());
-		platform.setText(game.getPlatform());
-		players.setText(game.getPlayers());
-		coop.setText(game.getCoop());
-		genres.setText(handleGenres(game));
-		releaseDate.setText(game.getReleaseDate());
-		publisher.setText(game.getPublisher());
-		developer.setText(game.getDeveloper());
-		overview.setText(game.getOverview());
-		
-        String imageUrl = urlMaker.getGameThumbNailUrl(game.getThumbNailLocation());
-        Picasso.with(this).load(imageUrl).into(thumbImage);
-	}
-
-	private String handleGenres(Game game) {
-		ArrayList<String> genres = game.getGenres();
-		String genresTxt = StringUtils.join(genres, ',');
-		return genresTxt;
 	}
 
 	private class DownloadGame extends AsyncTask<URL, Integer, GameList> {
@@ -125,9 +180,63 @@ public class GameOverviewActivity extends SherlockActivity {
 		}
 
 		protected void onPostExecute(GameList gamesList) {
-			setContentView(R.layout.activity_game_overview);
-			showGame(gamesList);
+			setGamesList(gamesList);
+			initGameOverview();
 		}
 	}
 
+	private void setGamesList(GameList gamesList) {
+		this.gamesList = gamesList;
+	}
+
+	private void showGame() {
+		Game game = gamesList.get(0);
+
+		TextView name = (TextView) findViewById(R.id.gameName);
+		TextView platform = (TextView) findViewById(R.id.gamePlatform);
+		TextView players = (TextView) findViewById(R.id.gamePlayersTxt);
+		TextView coop = (TextView) findViewById(R.id.gameCoopTxt);
+		TextView genres = (TextView) findViewById(R.id.gameGenresTxt);
+		TextView releaseDate = (TextView) findViewById(R.id.gameReleaseTxt);
+		TextView publisher = (TextView) findViewById(R.id.gamePublisherTxt);
+		TextView developer = (TextView) findViewById(R.id.gameDeveloperTxt);
+		TextView overview = (TextView) findViewById(R.id.overviewTxt);
+		ImageView thumbImage = (ImageView) findViewById(R.id.gameThumb);
+
+		name.setText(game.getTitle());
+		platform.setText(game.getPlatform());
+		players.setText(game.getPlayers());
+		coop.setText(game.getCoop());
+		genres.setText(handleGenres(game));
+		releaseDate.setText(game.getReleaseDate());
+		publisher.setText(game.getPublisher());
+		developer.setText(game.getDeveloper());
+		overview.setText(game.getOverview());
+
+		String imageUrl = urlMaker.getGameThumbNailUrl(game
+				.getThumbNailLocation());
+		Picasso.with(this).load(imageUrl).into(thumbImage);
+	}
+
+	private void showImages() {
+		GridView gridView = (GridView) findViewById(R.id.imagesview);
+		gridView.setAdapter(new ImageAdapter(this, gamesList.get(0).getImages()));
+
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				Toast.makeText(GameOverviewActivity.this, "click " + position ,Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+	private void showVideos() {
+
+	}
+
+	private String handleGenres(Game game) {
+		ArrayList<String> genres = game.getGenres();
+		String genresTxt = StringUtils.join(genres, ',');
+		return genresTxt;
+	}
 }

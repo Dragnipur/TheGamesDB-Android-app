@@ -3,7 +3,6 @@ package dragni.tgb.thegamesdb.logic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -31,7 +30,6 @@ public class GameSearcher {
 	}
 
 	public GameList getSearchResults() {
-		Collections.sort(searchList);
 		return searchList;
 	}
 
@@ -154,7 +152,7 @@ public class GameSearcher {
 				searchList.getLastGame().setDeveloper(value);
 				break;
 			case original:
-				searchList.getLastGame().addImage(value);
+				//searchList.getLastGame().addImage(value);
 				break;
 			default:
 				break;
