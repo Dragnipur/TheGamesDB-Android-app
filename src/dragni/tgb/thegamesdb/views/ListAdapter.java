@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import dragni.tgb.thegamesdb.entity.Game;
 import dragni.tgb.thegamesdb.entity.GameList;
+import dragni.tgb.thegamesdb.entity.Image;
 import dragni.tgb.thegamesdb.util.UrlMaker;
  
 public class ListAdapter extends BaseAdapter {
@@ -54,12 +55,6 @@ public class ListAdapter extends BaseAdapter {
         Game game = games.get(position);
         
         String gameTitle = game.getTitle();
-        
-        //TODO: fix layout so it just puts the rest of the name on a next line.
-        if(gameTitle.length() > 20) {
-        	gameTitle = gameTitle.substring(0, 20);
-        	gameTitle = gameTitle + "...";
-        }
  
         // Setting all values in listview
         title.setTag(game.getId());
@@ -67,8 +62,14 @@ public class ListAdapter extends BaseAdapter {
         platform.setText(game.getPlatform());
         releaseDate.setText(game.getReleaseDate());
         Context context = vi.getContext();
-        String imageUrl = urlMaker.getGameThumbNailUrl(game.getThumbNailLocation());
-        Picasso.with(context).load(imageUrl).into(thumb_image);
+        
+        if(game.hasImages()) {
+            Image thumbNail = game.getImages().get(0);
+            String thumbNailUrl = thumbNail.getThumbNail();
+            String imageUrl = urlMaker.getGameImageUrl(thumbNailUrl);
+            Picasso.with(context).load(imageUrl).into(thumb_image);
+        }
+        
         return vi;
     }
 }

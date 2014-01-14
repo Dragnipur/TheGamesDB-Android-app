@@ -5,38 +5,42 @@
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
     android:padding="5dip" >
- 
-    <!--  ListRow Left sied Thumbnail image -->
-    <LinearLayout android:id="@+id/thumbnail"
+
+    <!-- ListRow Left side Thumbnail image -->
+
+    <LinearLayout
+        android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dip"
         android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
         android:background="@drawable/image_bg"
-        android:layout_marginRight="5dip">
- 
+        android:padding="3dip" >
+
         <ImageView
-            android:contentDescription="@string/logo"
             android:id="@+id/list_image"
             android:layout_width="50dip"
             android:layout_height="50dip"
-            android:src="@drawable/bf4"/>
- 
+            android:contentDescription="@string/logo"
+            android:src="@drawable/bf4" />
     </LinearLayout>
- 
-    <!-- Title Of Game-->
-      <TextView
-         android:id="@+id/title"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignParentTop="true"
-         android:layout_toRightOf="@+id/thumbnail"
-         android:textColor="#040404"
-         android:textSize="17sp"
-         android:textStyle="bold"
-         android:typeface="sans" />
- 
+
+    <!-- Title Of Game -->
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/platform"
+        android:layout_alignTop="@+id/thumbnail"
+        android:layout_toLeftOf="@+id/releaseDate"
+        android:textColor="#040404"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
     <!-- Platform -->
+
     <TextView
         android:id="@+id/platform"
         android:layout_width="fill_parent"
@@ -46,7 +50,7 @@
         android:layout_toRightOf="@+id/thumbnail"
         android:textColor="#4D4D4D"
         android:textSize="12sp" />
- 
+
     <!-- Rightend ReleaseDate -->
 
     <TextView
@@ -57,20 +61,19 @@
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/title"
         android:layout_marginRight="5dip"
-        android:layout_toRightOf="@+id/title"
         android:gravity="right"
         android:textColor="#3B6145"
         android:textSize="12sp"
         android:textStyle="bold" />
- 
-     <!-- Rightend Arrow -->
 
-     <ImageView
-         android:contentDescription="@string/arrow"
-         android:layout_width="20dp"
-         android:layout_height="20dp"
-         android:layout_alignRight="@+id/platform"
-         android:layout_below="@+id/title"
-         android:src="@drawable/arrow" />
+    <!-- Rightend Arrow -->
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignRight="@+id/platform"
+        android:layout_below="@+id/title"
+        android:contentDescription="@string/arrow"
+        android:src="@drawable/arrow" />
 
 </RelativeLayout>

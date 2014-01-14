@@ -10,7 +10,7 @@ public class Game implements Comparable<Game> {
 	private ImageList images;
 	private int id;
 	private String title, platform, releaseDate, overview, ESRB, players, coop,
-			youtubeUrl, publisher, developer, thumbNailLocation;
+			youtubeUrl, publisher, developer;
 	private double rating;
 
 	public enum SortType {
@@ -21,6 +21,7 @@ public class Game implements Comparable<Game> {
 
 	public Game() {
 		genres = new ArrayList<String>();
+		images = new ImageList();
 	}
 
 	public int compareTo(Game comparisonGame) {
@@ -58,7 +59,9 @@ public class Game implements Comparable<Game> {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 			Date startReleaseDate = dateFormat.parse(release);
 			Date comparisonReleaseDate = dateFormat.parse(comparisonRelease);
+			
 			return startReleaseDate.compareTo(comparisonReleaseDate);
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return -1;
@@ -119,12 +122,13 @@ public class Game implements Comparable<Game> {
 		this.rating = rating;
 	}
 
-	public void setThumbNailLocation(String thumbNailLocation) {
-		this.thumbNailLocation = thumbNailLocation;
-	}
-
 	public void addImage(Image image) {
 		images.add(image);
+	}
+	
+	public Image getLastImage() {
+		Image image = images.getLastImage();
+		return image;
 	}
 
 	public void setSortType(SortType sortType) {
@@ -211,11 +215,19 @@ public class Game implements Comparable<Game> {
 		return rating;
 	}
 
-	public String getThumbNailLocation() {
-		return thumbNailLocation;
-	}
-
 	public ImageList getImages() {
 		return images;
+	}
+	
+	public Image getImage(int position) {
+		return images.get(position);
+	}
+	
+	public boolean hasImages() {
+		if(images.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

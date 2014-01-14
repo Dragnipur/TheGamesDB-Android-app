@@ -41,6 +41,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dragni.tgb.thegamesdb.views.GameListActivity" />
         </activity>
+        <activity
+            android:name="dragni.tgb.thegamesdb.views.ImageZoomActivity"
+            android:label="@string/title_activity_image_zoom" >
+        </activity>
     </application>
 
 </manifest>

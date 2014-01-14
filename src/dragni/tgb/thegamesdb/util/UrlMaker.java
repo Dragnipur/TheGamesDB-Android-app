@@ -48,7 +48,7 @@ public class UrlMaker {
 		return url;
 	}
 
-	public String getGameThumbNailUrl(String relativePath) {
+	public String getGameImageUrl(String relativePath) {
 		String url = null;
 		url = baseImgUrl + relativePath;
 		return url;

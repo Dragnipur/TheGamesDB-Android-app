@@ -21,5 +21,7 @@
     <string name="title_activity_game_list">GameListActivity</string>
     <string name="title_activity_game_overview">GameOverviewActivity</string>
     <string name="title_activity_game_list_fragment">GameListFragment</string>
+    <string name="title_activity_image_zoom">ImageZoom</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

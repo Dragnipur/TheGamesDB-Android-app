@@ -52,7 +52,7 @@ public class GameListActivity extends SherlockActivity {
 		gameSearcher = new GameSearcher();
 		urlMaker = new UrlMaker();
 		gameListSorter = new GameListSorter();
-		
+
 		sendSearchRequest(searchQuery);
 	}
 
@@ -111,10 +111,10 @@ public class GameListActivity extends SherlockActivity {
 	private void setSortMenuIcons(Menu menu) {
 		SortType sortType = gameListSorter.getSortType();
 		MenuItem item;
-		
+
 		resetSortMenuIcons(menu);
-		
-		switch(sortType) {
+
+		switch (sortType) {
 		case nameAsc:
 			item = menu.findItem(R.id.sortByName);
 			item.setIcon(R.drawable.up);
@@ -141,7 +141,7 @@ public class GameListActivity extends SherlockActivity {
 			break;
 		}
 	}
-	
+
 	private void resetSortMenuIcons(Menu menu) {
 		MenuItem nameItem = menu.findItem(R.id.sortByName);
 		nameItem.setIcon(R.drawable.none);
@@ -150,12 +150,11 @@ public class GameListActivity extends SherlockActivity {
 		MenuItem releaseItem = menu.findItem(R.id.sortByName);
 		releaseItem.setIcon(R.drawable.none);
 	}
-	
+
 	private void sortGameList() {
-		games = gameListSorter.sortGamesList(games);		
+		games = gameListSorter.sortGamesList(games);
 		showGamesList(games);
 	}
-	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -182,7 +181,6 @@ public class GameListActivity extends SherlockActivity {
 		return super.onOptionsItemSelected(menuItem);
 	}
 
-
 	private class DownloadGamesList extends AsyncTask<URL, Integer, GameList> {
 		protected GameList doInBackground(URL... url) {
 
@@ -203,22 +201,29 @@ public class GameListActivity extends SherlockActivity {
 		}
 
 		protected void onPostExecute(GameList gamesList) {
+			if (gamesList != null) {
+				if (gamesList.size() > 0) {
+					setContentView(R.layout.activity_game_list);
+					gamesList = gameListSorter.sortByNameAsc(gamesList);
+					showGamesList(gamesList);
+				} else {
 
-			if (gamesList.size() > 0) {
-				setContentView(R.layout.activity_game_list);
-				gamesList = gameListSorter.sortByNameAsc(gamesList);
-				showGamesList(gamesList);
-			} else {
+					Context context = getApplicationContext();
+					CharSequence text = "No games found";
+					int duration = Toast.LENGTH_LONG;
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
 
+					Intent i = new Intent(context, SearchActivity.class);
+					startActivity(i);
+
+				}
+			}
+			else
+			{
 				Context context = getApplicationContext();
-				CharSequence text = "No games found";
-				int duration = Toast.LENGTH_LONG;
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-
 				Intent i = new Intent(context, SearchActivity.class);
 				startActivity(i);
-
 			}
 		}
 	}

@@ -10,13 +10,15 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import dragni.tgb.thegamesdb.entity.Game;
 import dragni.tgb.thegamesdb.entity.GameList;
+import dragni.tgb.thegamesdb.entity.Image;
 
 public class GameSearcher {
 
 	private GameList searchList;
-	private int searchType;
 	private static int MULTIPLEGAMES = 0;
 	private static int SINGLEGAME = 1;
+	private int searchType;
+	private String baseUrl;
 
 	private enum XmlTag {
 		Data, baseImgUrl, Game, id, GameTitle, AlternateTitles, title, ReleaseDate, PlatformId, Platform, Overview, ESRB, Genres, genre, Players, Coop, Youtube, Publisher, Developer, Rating, Images, fanart, original, thumb, boxart, banner, screenshot, clearlogo, error;
@@ -36,6 +38,7 @@ public class GameSearcher {
 	public void parseXml(URL url, int type) throws XmlPullParserException,
 			IOException {
 		searchType = type;
+
 		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		xpp = factory.newPullParser();
@@ -58,17 +61,44 @@ public class GameSearcher {
 
 	private void handleStartTag() {
 		currentTag = (xpp.getName());
-		if (currentTag.equals("boxart"))
+
+		if (currentTag.equals("boxart")) {
 			handleBoxArtTag();
+		} else if (currentTag.equals("original") && searchType == SINGLEGAME) {
+			handleOriginalTag();
+		}
 	}
 
 	private void handleBoxArtTag() {
 		String side = xpp.getAttributeValue(null, "side");
 
-		if (side.equals("front")) {
+		if (side.equals("front")
+				|| (side.equals("back") && searchType == SINGLEGAME)) {
 			String thumbNail = xpp.getAttributeValue(null, "thumb");
-			searchList.getLastGame().setThumbNailLocation(thumbNail);
+			Image image = new Image();
+			image.setThumbNail(thumbNail);
+			searchList.getLastGame().addImage(image);
+
+			if (side.equals("front")) {
+				searchList.getLastGame().getImages().setThumbNailIndex();
+			}
 		}
+	}
+
+	private void handleOriginalTag() {
+
+		String widthStr = xpp.getAttributeValue(null, "width");
+		String heightStr = xpp.getAttributeValue(null, "height");
+
+		Image image = new Image();
+		int width = Integer.parseInt(widthStr); // TODO: catch numberformat
+												// exception
+		int height = Integer.parseInt(heightStr); // TODO: catch numberformat
+													// exception
+		image.setWidth(width);
+		image.setHeight(height);
+
+		searchList.getLastGame().addImage(image);
 	}
 
 	private void handleTextTag() {
@@ -152,7 +182,10 @@ public class GameSearcher {
 				searchList.getLastGame().setDeveloper(value);
 				break;
 			case original:
-				//searchList.getLastGame().addImage(value);
+				handleOriginalImageTag(value);
+				break;
+			case thumb:
+				handleThumbTag(value);
 				break;
 			default:
 				break;
@@ -160,6 +193,16 @@ public class GameSearcher {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void handleOriginalImageTag(String value) {
+		Image image = searchList.getLastGame().getLastImage();
+		image.setUrl(value);
+	}
+
+	private void handleThumbTag(String value) {
+		Image image = searchList.getLastGame().getLastImage();
+		image.setThumbNail(value);
 	}
 
 	private void handleEndTag() {

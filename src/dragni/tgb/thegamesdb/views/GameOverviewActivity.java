@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import dragni.tgb.thegamesdb.entity.Game;
 import dragni.tgb.thegamesdb.entity.GameList;
+import dragni.tgb.thegamesdb.entity.Image;
 import dragni.tgb.thegamesdb.logic.GameSearcher;
 import dragni.tgb.thegamesdb.util.SearchType;
 import dragni.tgb.thegamesdb.util.UrlMaker;
@@ -104,6 +106,7 @@ public class GameOverviewActivity extends SherlockFragmentActivity {
 					showGame();
 					break;
 				case IMAGES:
+					showImages();
 					break;
 				case VIDEOS:
 					break;
@@ -126,8 +129,7 @@ public class GameOverviewActivity extends SherlockFragmentActivity {
 
 	private void createTabs(ActionBar actionBar, TabListener tabListener) {
 		// Create information tab.
-		tab = actionBar.newTab().setText("information")
-				.setTabListener(tabListener);
+		tab = actionBar.newTab().setText("information").setTabListener(tabListener);
 		actionBar.addTab(tab);
 
 		// Create images tab.
@@ -213,8 +215,9 @@ public class GameOverviewActivity extends SherlockFragmentActivity {
 		developer.setText(game.getDeveloper());
 		overview.setText(game.getOverview());
 
-		String imageUrl = urlMaker.getGameThumbNailUrl(game
-				.getThumbNailLocation());
+		Image thumbNail = game.getImages().getThumbNail();
+		String thumbNailLocation = thumbNail.getThumbNail();
+		String imageUrl = urlMaker.getGameImageUrl(thumbNailLocation);
 		Picasso.with(this).load(imageUrl).into(thumbImage);
 	}
 
@@ -222,12 +225,19 @@ public class GameOverviewActivity extends SherlockFragmentActivity {
 		GridView gridView = (GridView) findViewById(R.id.imagesview);
 		gridView.setAdapter(new ImageAdapter(this, gamesList.get(0).getImages()));
 
-		gridView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				Toast.makeText(GameOverviewActivity.this, "click " + position ,Toast.LENGTH_SHORT).show();
+		gridView.setOnItemClickListener(new OnItemClickListener() {			
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				handleImageClick(position);
 			}
 		});
+	}
+	
+	private void handleImageClick(int position) {
+		Image image = gamesList.get(0).getImage(position);
+		String imageUrl = image.getUrl();
+    	Intent intent = new Intent(this, ImageZoomActivity.class);
+    	intent.putExtra("imageUrl", imageUrl);
+    	startActivity(intent);
 	}
 
 	private void showVideos() {
